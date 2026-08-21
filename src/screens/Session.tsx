@@ -128,7 +128,7 @@ export function SessionScreen() {
       <header className="session-head">
         <button
           type="button"
-          className="btn-quiet"
+          className="btn-quiet session-back"
           onClick={() => navigate('/')}
           aria-label="Back, keep workout running"
         >
@@ -167,29 +167,33 @@ export function SessionScreen() {
           </button>
 
           {entry.sets.length > 0 && (
-            <ul className="logged">
+            <div className="setchips">
               {entry.sets.map((s, i) => (
-                <li key={i} className={`logged-row${s.kind === 'warmup' ? ' warm' : ''}`}>
-                  <span className="faint small">{s.kind === 'warmup' ? 'W' : setNumber(entry, i)}</span>
-                  <span className="num">
-                    {formatWeight(s.weight, settings.units)} {settings.units}
-                  </span>
-                  <span className="num dim">× {s.reps}</span>
-                  <button
-                    type="button"
-                    className="btn-quiet undo"
-                    aria-label="Remove this set"
-                    onClick={() =>
-                      updateActive((draft) => {
-                        draft.entries[index].sets.splice(i, 1)
-                      })
-                    }
-                  >
-                    ✕
-                  </button>
-                </li>
+                <span
+                  key={i}
+                  className={`setchip${s.kind === 'warmup' ? ' warm' : ''}`}
+                  aria-label={
+                    s.kind === 'warmup'
+                      ? `Warmup, ${s.weight} by ${s.reps}`
+                      : `Set ${setNumber(entry, i)}, ${s.weight} by ${s.reps}`
+                  }
+                >
+                  <b className="num">{formatWeight(s.weight, settings.units)}</b>
+                  <span className="num">×{s.reps}</span>
+                </span>
               ))}
-            </ul>
+              <button
+                type="button"
+                className="btn-quiet undo-last"
+                onClick={() =>
+                  updateActive((draft) => {
+                    draft.entries[index].sets.pop()
+                  })
+                }
+              >
+                Undo
+              </button>
+            </div>
           )}
 
           <div className="inputs">
@@ -217,7 +221,8 @@ export function SessionScreen() {
             {plates && (
               <span className={plates.exact ? 'dim' : 'warn'}>
                 {describeStack(plates, settings.units)}
-                {!plates.exact && !plates.belowBar ? ' (nearest)' : ''}
+                <span className="faint"> per side</span>
+                {!plates.exact && !plates.belowBar ? ' · nearest' : ''}
               </span>
             )}
             {suggestion && suggestion.source !== 'manual' && (

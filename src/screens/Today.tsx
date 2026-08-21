@@ -103,7 +103,7 @@ export function TodayScreen() {
       )}
 
       {!active && (
-        <button type="button" className="btn btn-ghost btn-block freestyle" onClick={begin}>
+        <button type="button" className="btn-quiet freestyle" onClick={begin}>
           Start an empty workout
         </button>
       )}

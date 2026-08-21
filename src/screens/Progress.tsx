@@ -63,9 +63,9 @@ export function ProgressScreen() {
     .sort((a, b) => a.date.localeCompare(b.date))
     .map((b) => ({ x: new Date(b.date).getTime(), y: b.weight }))
 
-  const lean = Object.keys(MUSCLE_LABEL)
-    .filter((m) => !volume[m as Muscle])
-    .slice(0, 4) as Muscle[]
+  const lean = (Object.keys(MUSCLE_LABEL) as Muscle[])
+    .filter((m) => m !== 'neck' && !volume[m])
+    .slice(0, 4)
 
   if (!history.length) {
     return (

@@ -71,7 +71,7 @@ describe('logging a workout', () => {
     // A reload mid-workout must not cost a single set.
     await page.reload()
     await page.getByText('Set 4 of 4').waitFor()
-    expect(await page.locator('.logged-row').count()).toBe(3)
+    expect(await page.locator('.setchip').count()).toBe(3)
 
     await logSet(page)
     // The last set auto-advances to the next exercise. Zero taps.
@@ -109,8 +109,8 @@ describe('logging a workout', () => {
     await enterWeight(page, '225')
 
     await page.getByRole('button', { name: /Add \d+ warmup sets/ }).click()
-    await page.locator('.logged-row.warm').first().waitFor()
-    expect(await page.locator('.logged-row.warm').count()).toBe(4)
+    await page.locator('.setchip.warm').first().waitFor()
+    expect(await page.locator('.setchip.warm').count()).toBe(4)
 
     await logSet(page)
     await page.locator('.pr-toast').waitFor()

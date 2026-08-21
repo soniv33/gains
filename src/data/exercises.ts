@@ -73,9 +73,14 @@ function primaryRank(e: Exercise, selected: Set<Muscle>): number {
   return e.primaryMuscles.some((m) => selected.has(m)) ? 0 : 1
 }
 
+/** The movements that actually appear in programs, for an unfiltered list. */
+const STAPLE =
+  /\b(bench press|squat|deadlift|overhead press|military press|shoulder press|barbell row|bent[- ]over row|pulldown|pull[- ]?up|chin[- ]?up|dip|lunge|hip thrust|curl|pushdown|lateral raise|leg press|leg curl|leg extension|calf raise|face pull|shrug|row)\b/i
+
 /** Compounds with free weights float to the top of an unfiltered list. */
 function score(e: Exercise): number {
   let s = 0
+  if (STAPLE.test(e.name)) s += 6
   if (e.mechanic === 'compound') s += 3
   if (e.equipment === 'barbell' || e.equipment === 'dumbbell') s += 2
   if (e.level === 'beginner') s += 1

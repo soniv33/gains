@@ -2,12 +2,12 @@ import type { Muscle } from '@/types'
 import { MUSCLE_LABEL } from '@/data/muscles'
 
 /**
- * A schematic figure assembled from one shape per muscle group. Deliberately not
- * an anatomical drawing: it has to stay legible at 120px wide and every region
- * has to be a comfortable tap target.
+ * A schematic figure: one connected silhouette with a shape per muscle group
+ * laid over it. Deliberately not an anatomical drawing — it has to stay legible
+ * at 100px wide and every region has to be a comfortable tap target.
  *
- * Used three ways — to filter the library, to show what a lift trains, and to
- * shade weekly volume so undertrained areas surface without you going looking.
+ * Used three ways: to filter the library, to show what a lift trains, and to
+ * shade weekly volume so undertrained areas surface without going looking.
  */
 
 interface Props {
@@ -15,70 +15,82 @@ interface Props {
   intensity?: Partial<Record<Muscle, number>>
   onSelect?: (muscle: Muscle) => void
   size?: number
-  /** Hide the front or back half when space is tight. */
   only?: 'front' | 'back'
 }
 
-type Shape = { m: Muscle; el: JSX.Element }
+type Shape = { m: Muscle; d?: string; e?: [number, number, number, number] }
 
-const mirror = (x: number) => 100 - x
+const mirrorPath = (d: string) =>
+  d.replace(/(-?\d+(?:\.\d+)?)( \d+(?:\.\d+)?)/g, (_, x: string, rest: string) =>
+    `${100 - Number(x)}${rest}`,
+  )
 
-/** Head, hands, feet and joints: silhouette filler, never interactive. */
-const Filler = () => (
-  <g className="bm-filler">
-    <ellipse cx="50" cy="14" rx="10" ry="12" />
-    <rect x="12" y="110" width="12" height="14" rx="6" />
-    <rect x="76" y="110" width="12" height="14" rx="6" />
-    <rect x="38" y="148" width="10" height="6" rx="3" />
-    <rect x="52" y="148" width="10" height="6" rx="3" />
-    <rect x="38" y="186" width="11" height="8" rx="3" />
-    <rect x="51" y="186" width="11" height="8" rx="3" />
-  </g>
-)
-
-const FRONT: Shape[] = [
-  { m: 'neck', el: <rect x="44" y="24" width="12" height="9" rx="3" /> },
-  { m: 'shoulders', el: <ellipse cx="28" cy="45" rx="12" ry="10" /> },
-  { m: 'shoulders', el: <ellipse cx={mirror(28)} cy="45" rx="12" ry="10" /> },
-  { m: 'chest', el: <path d="M39 37 Q45 33 49 37 L49 55 Q42 56 39 48 Z" /> },
-  { m: 'chest', el: <path d="M61 37 Q55 33 51 37 L51 55 Q58 56 61 48 Z" /> },
-  { m: 'abs', el: <rect x="43" y="58" width="14" height="30" rx="4" /> },
-  { m: 'obliques', el: <path d="M38 58 L42 58 L42 88 L38 78 Z" /> },
-  { m: 'obliques', el: <path d="M62 58 L58 58 L58 88 L62 78 Z" /> },
-  { m: 'biceps', el: <ellipse cx="22" cy="66" rx="7" ry="15" /> },
-  { m: 'biceps', el: <ellipse cx={mirror(22)} cy="66" rx="7" ry="15" /> },
-  { m: 'forearms', el: <ellipse cx="18" cy="95" rx="6" ry="16" /> },
-  { m: 'forearms', el: <ellipse cx={mirror(18)} cy="95" rx="6" ry="16" /> },
-  { m: 'quads', el: <path d="M38 94 L47 94 L46 146 L37 146 Z" /> },
-  { m: 'quads', el: <path d="M62 94 L53 94 L54 146 L63 146 Z" /> },
-  { m: 'adductors', el: <path d="M48 96 L50 96 L50 130 L47 128 Z" /> },
-  { m: 'adductors', el: <path d="M52 96 L50 96 L50 130 L53 128 Z" /> },
-  { m: 'calves', el: <ellipse cx="42" cy="168" rx="6" ry="17" /> },
-  { m: 'calves', el: <ellipse cx={mirror(42)} cy="168" rx="6" ry="17" /> },
+/**
+ * The body itself. Drawn first, and every part overlaps its neighbour so the
+ * figure reads as one person rather than a pile of parts.
+ */
+const SILHOUETTE = [
+  'M50 2a9 11 0 0 1 0 22a9 11 0 0 1 0-22Z',
+  'M46 21h8v10h-8Z',
+  'M36 31 64 31 62 66 61 92Q50 97 39 92L38 66Z',
+  'M35 34 41 36 34 70 27 68Z',
+  'M65 34 59 36 66 70 73 68Z',
+  'M27 68 34 70 31 102 24 100Z',
+  'M73 68 66 70 69 102 76 100Z',
+  'M21 98h9v12a4.5 4.5 0 0 1-9 0Z',
+  'M70 98h9v12a4.5 4.5 0 0 1-9 0Z',
+  'M39 89 48 89 47 142 37 142Z',
+  'M61 89 52 89 53 142 63 142Z',
+  'M38 140 47 140 45 182 38 182Z',
+  'M62 140 53 140 55 182 62 182Z',
+  'M35 180h13v9a3 3 0 0 1-3 3h-7a3 3 0 0 1-3-3Z',
+  'M52 180h13v9a3 3 0 0 1-3 3h-7a3 3 0 0 1-3-3Z',
 ]
 
-const BACK: Shape[] = [
-  { m: 'traps', el: <path d="M38 28 L62 28 L56 52 L44 52 Z" /> },
-  { m: 'shoulders', el: <ellipse cx="28" cy="45" rx="12" ry="10" /> },
-  { m: 'shoulders', el: <ellipse cx={mirror(28)} cy="45" rx="12" ry="10" /> },
-  { m: 'upper back', el: <path d="M38 40 L44 44 L44 60 L37 56 Z" /> },
-  { m: 'upper back', el: <path d="M62 40 L56 44 L56 60 L63 56 Z" /> },
-  { m: 'lats', el: <path d="M37 56 L45 54 L45 76 L39 72 Z" /> },
-  { m: 'lats', el: <path d="M63 56 L55 54 L55 76 L61 72 Z" /> },
-  { m: 'lower back', el: <rect x="44" y="62" width="12" height="26" rx="4" /> },
-  { m: 'triceps', el: <ellipse cx="22" cy="66" rx="7" ry="15" /> },
-  { m: 'triceps', el: <ellipse cx={mirror(22)} cy="66" rx="7" ry="15" /> },
-  { m: 'forearms', el: <ellipse cx="18" cy="95" rx="6" ry="16" /> },
-  { m: 'forearms', el: <ellipse cx={mirror(18)} cy="95" rx="6" ry="16" /> },
-  { m: 'glutes', el: <path d="M38 90 Q44 86 49 92 L49 106 Q41 108 38 100 Z" /> },
-  { m: 'glutes', el: <path d="M62 90 Q56 86 51 92 L51 106 Q59 108 62 100 Z" /> },
-  { m: 'abductors', el: <path d="M35 88 L39 90 L38 104 L34 98 Z" /> },
-  { m: 'abductors', el: <path d="M65 88 L61 90 L62 104 L66 98 Z" /> },
-  { m: 'hamstrings', el: <path d="M38 108 L47 108 L46 146 L37 146 Z" /> },
-  { m: 'hamstrings', el: <path d="M62 108 L53 108 L54 146 L63 146 Z" /> },
-  { m: 'calves', el: <ellipse cx="42" cy="168" rx="6" ry="17" /> },
-  { m: 'calves', el: <ellipse cx={mirror(42)} cy="168" rx="6" ry="17" /> },
+const FRONT_L: Shape[] = [
+  { m: 'shoulders', e: [37, 38, 6.5, 6.5] },
+  { m: 'chest', d: 'M39 35Q45 32 49 36L49 52Q42 53 39 45Z' },
+  { m: 'biceps', e: [34, 53, 5.5, 12] },
+  { m: 'forearms', e: [29, 85, 5, 14] },
+  { m: 'obliques', d: 'M39 54 44 54 44 84 40 76Z' },
+  { m: 'quads', d: 'M40 92 47 92 46 138 39 138Z' },
+  { m: 'adductors', d: 'M48 93 50 93 50 124 47 122Z' },
+  { m: 'calves', e: [42, 158, 5, 14] },
 ]
+
+const FRONT_CENTRE: Shape[] = [
+  { m: 'neck', d: 'M46 22h8v9h-8Z' },
+  { m: 'abs', d: 'M45 54h10v30h-10Z' },
+]
+
+const BACK_L: Shape[] = [
+  { m: 'shoulders', e: [37, 38, 6.5, 6.5] },
+  { m: 'upper back', d: 'M39 39 45 42 45 56 38 53Z' },
+  { m: 'lats', d: 'M38 53 45 51 45 76 40 72Z' },
+  { m: 'triceps', e: [34, 53, 5.5, 12] },
+  { m: 'forearms', e: [29, 85, 5, 14] },
+  { m: 'abductors', d: 'M35 84 40 86 39 99 34 94Z' },
+  { m: 'glutes', d: 'M39 84Q45 81 50 86L50 99Q42 101 39 94Z' },
+  { m: 'hamstrings', d: 'M40 100 47 100 46 138 39 138Z' },
+  { m: 'calves', e: [42, 158, 5, 14] },
+]
+
+const BACK_CENTRE: Shape[] = [
+  { m: 'traps', d: 'M40 29 60 29 55 50 45 50Z' },
+  { m: 'lower back', d: 'M45 57h10v27h-10Z' },
+]
+
+function expand(left: Shape[], centre: Shape[]): Shape[] {
+  const right = left.map((s) => ({
+    m: s.m,
+    d: s.d ? mirrorPath(s.d) : undefined,
+    e: s.e ? ([100 - s.e[0], s.e[1], s.e[2], s.e[3]] as [number, number, number, number]) : undefined,
+  }))
+  return [...centre, ...left, ...right]
+}
+
+const FRONT = expand(FRONT_L, FRONT_CENTRE)
+const BACK = expand(BACK_L, BACK_CENTRE)
 
 function Figure({
   shapes,
@@ -93,7 +105,11 @@ function Figure({
 }) {
   return (
     <svg viewBox="0 0 100 200" className="bodymap" role="img" aria-label={`${label} view`}>
-      <Filler />
+      <g className="bm-body">
+        {SILHOUETTE.map((d, i) => (
+          <path key={i} d={d} />
+        ))}
+      </g>
       {shapes.map((shape, index) => {
         const value = intensity[shape.m] ?? 0
         const interactive = Boolean(onSelect)
@@ -103,7 +119,7 @@ function Figure({
             className="bm-muscle"
             data-muscle={shape.m}
             data-on={value > 0 ? 'true' : 'false'}
-            style={{ opacity: value > 0 ? 0.35 + value * 0.65 : 1 }}
+            style={value > 0 ? { opacity: 0.4 + value * 0.6 } : undefined}
             onClick={interactive ? () => onSelect?.(shape.m) : undefined}
             role={interactive ? 'button' : undefined}
             tabIndex={interactive ? 0 : undefined}
@@ -120,7 +136,8 @@ function Figure({
                 : undefined
             }
           >
-            {shape.el}
+            {shape.d ? <path d={shape.d} /> : null}
+            {shape.e ? <ellipse cx={shape.e[0]} cy={shape.e[1]} rx={shape.e[2]} ry={shape.e[3]} /> : null}
           </g>
         )
       })}
@@ -147,7 +164,7 @@ export function emphasis(
   secondary: Muscle[],
 ): Partial<Record<Muscle, number>> {
   const map: Partial<Record<Muscle, number>> = {}
-  for (const m of secondary) map[m] = 0.45
+  for (const m of secondary) map[m] = 0.4
   for (const m of primary) map[m] = 1
   return map
 }

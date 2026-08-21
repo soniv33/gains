@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { Equipment, Muscle } from '@/types'
 import { rankedSearch } from '@/data/exercises'
 import { BodyMap } from '@/components/BodyMap'
+import { MUSCLE_LABEL } from '@/data/muscles'
 import { ExerciseDemo } from '@/components/ExerciseDemo'
 import { ExerciseSheet } from './ExerciseDetail'
 
@@ -52,13 +53,23 @@ export function LibraryScreen() {
         aria-label="Search exercises"
       />
 
-      <BodyMap
-        size={140}
-        intensity={Object.fromEntries(muscles.map((m) => [m, 1]))}
-        onSelect={toggleMuscle}
-      />
+      <div className="filter-row">
+        <BodyMap
+          size={132}
+          intensity={Object.fromEntries(muscles.map((m) => [m, 1]))}
+          onSelect={toggleMuscle}
+        />
+        <div className="filter-hint stack">
+          <span className="eyebrow">Filter by muscle</span>
+          <span className="small dim">
+            {muscles.length
+              ? muscles.map((m) => MUSCLE_LABEL[m]).join(', ')
+              : 'Tap the figure to narrow the list.'}
+          </span>
+        </div>
+      </div>
 
-      <div className="row wrap chips">
+      <div className="chip-scroll">
         {EQUIPMENT.map((e) => (
           <button
             key={e}

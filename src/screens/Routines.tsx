@@ -13,6 +13,7 @@ export function RoutinesScreen() {
   const saveRoutine = useApp((s) => s.saveRoutine)
   const deleteRoutine = useApp((s) => s.deleteRoutine)
   const [preview, setPreview] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
   const template = TEMPLATES.find((t) => t.key === preview)
   const owned = new Set(routines.map((r) => r.templateKey))
@@ -64,8 +65,20 @@ export function RoutinesScreen() {
               >
                 Edit
               </button>
-              <button type="button" className="btn-quiet danger" onClick={() => deleteRoutine(r.id)}>
-                Delete
+              <button
+                type="button"
+                className="btn-quiet danger"
+                onClick={() => {
+                  if (confirmDelete === r.id) {
+                    deleteRoutine(r.id)
+                    setConfirmDelete(null)
+                  } else {
+                    setConfirmDelete(r.id)
+                  }
+                }}
+                onBlur={() => setConfirmDelete((id) => (id === r.id ? null : id))}
+              >
+                {confirmDelete === r.id ? 'Tap again to delete' : 'Delete'}
               </button>
             </div>
           </div>
