@@ -1,0 +1,75 @@
+/*
+ * One accent, everything else greyscale. The accent means exactly two things:
+ * "this is the thing to tap" and "this set is done / this is a record".
+ * Light is the base palette; dark overrides only the tokens that change, under
+ * both prefers-color-scheme and an explicit [data-theme] so the toggle wins both ways.
+ */
+:root {
+  --bg: #ffffff;
+  --surface: #f6f6f8;
+  --surface-2: #ededf1;
+  --hairline: #e2e2e8;
+  --text: #0b0b0c;
+  --text-dim: #6b6b74;
+  --text-faint: #a0a0aa;
+  --accent: #0a9d4a;
+  --on-accent: #ffffff;
+  --accent-soft: rgba(10, 157, 74, 0.12);
+  --warn: #b7791f;
+  --danger: #c0392b;
+  --scrim: rgba(0, 0, 0, 0.4);
+
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-full: 999px;
+
+  --tap: 48px;
+  --tap-lg: 60px;
+
+  --pad: 16px;
+  --gap: 12px;
+
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --dur: 220ms;
+
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto,
+    Inter, 'Helvetica Neue', Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0b0b0c;
+    --surface: #141417;
+    --surface-2: #1d1d21;
+    --hairline: #27272c;
+    --text: #f4f4f6;
+    --text-dim: #8b8b93;
+    --text-faint: #55555d;
+    --accent: #3de87a;
+    --on-accent: #052b14;
+    --accent-soft: rgba(61, 232, 122, 0.14);
+    --warn: #e0b341;
+    --danger: #ff6b5e;
+    --scrim: rgba(0, 0, 0, 0.6);
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #0b0b0c;
+  --surface: #141417;
+  --surface-2: #1d1d21;
+  --hairline: #27272c;
+  --text: #f4f4f6;
+  --text-dim: #8b8b93;
+  --text-faint: #55555d;
+  --accent: #3de87a;
+  --on-accent: #052b14;
+  --accent-soft: rgba(61, 232, 122, 0.14);
+  --warn: #e0b341;
+  --danger: #ff6b5e;
+  --scrim: rgba(0, 0, 0, 0.6);
+}
