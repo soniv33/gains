@@ -67,21 +67,36 @@ preview`) or the deployed site.
 
 ## Getting it on your phone
 
-Pushing to `main` deploys to **https://soniv33.github.io/gains/** via GitHub
-Actions. Enable it once, under **Settings → Pages → Source → GitHub Actions**;
-after that every push to `main` redeploys. You can also run the workflow by hand
-from the Actions tab to deploy a branch before merging.
+Deployed on **Vercel**, which serves from the domain root — no subpath, no build
+flags, clean URLs.
 
-Then open that URL in Safari on your phone and use **Share → Add to Home
-Screen**. It installs as a standalone app: its own icon, no browser chrome, and
-it works with no signal.
+```bash
+npx vercel          # first run links the project and gives you a preview URL
+npx vercel --prod   # promote to production
+```
 
-The site is built for the `/gains/` subpath (`npm run build:pages`). Pages has no
-SPA rewrite, so the build also emits a `404.html` copy of the app shell — that is
-what makes a hard refresh on a deep link work.
+Or connect the repo once at [vercel.com/new](https://vercel.com/new) and every
+push deploys itself. Vercel auto-detects Vite; `vercel.json` pins the build
+anyway and adds two things that matter:
 
-If you ever serve it from a domain root instead, `npm run build` is already
-correct; the subpath is opt-in via `BASE_PATH`.
+- **A catch-all rewrite to `index.html`**, so a hard refresh on `/library` works.
+  Real files still win, so the 1472 demo frames are served as files, not rewritten.
+- **Cache headers.** `/ex/*` and `/assets/*` are immutable for a year — the demo
+  frames never change and Vite fingerprints its own filenames. `sw.js` and the
+  manifest are `must-revalidate`, without which a deploy would never reach a
+  phone that already installed the app.
+
+Then open the URL in Safari on your phone and use **Share → Add to Home Screen**.
+It installs as a standalone app: its own icon, no browser chrome, and it works
+with no signal.
+
+### GitHub Pages, if you ever want it
+
+Still supported, just not the default. Pages serves from `/gains/`, so the build
+needs `npm run build:pages` — which sets `BASE_PATH` and emits a `404.html` copy
+of the app shell, since Pages has no SPA rewrite. Run the **Deploy to GitHub
+Pages** workflow by hand from the Actions tab, having set
+**Settings → Pages → Source → GitHub Actions** once.
 
 ## Exercise data
 

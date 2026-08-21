@@ -1,9 +1,8 @@
+# Vercel is the primary deploy (see vercel.json). This is kept as a working
+# alternative and only runs when you trigger it by hand from the Actions tab.
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
-  # Lets you deploy from a branch before merging, from the Actions tab.
   workflow_dispatch:
 
 # Pages needs these; the default GITHUB_TOKEN does not have them.
