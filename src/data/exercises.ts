@@ -95,10 +95,14 @@ function rank(e: Exercise, query: string): number {
   return 3
 }
 
-/** Demo frame paths are derived from the id rather than stored 736 times over. */
+/**
+ * Demo frame paths are derived from the id rather than stored 736 times over,
+ * and prefixed with the deploy base so they resolve under a subpath too.
+ */
 export function demoFrames(exercise: Exercise): [string, string] | undefined {
   if (!exercise.hasDemo) return undefined
-  return [`/ex/${exercise.id}/0.webp`, `/ex/${exercise.id}/1.webp`]
+  const root = `${import.meta.env.BASE_URL}ex/${exercise.id}`
+  return [`${root}/0.webp`, `${root}/1.webp`]
 }
 
 /**

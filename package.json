@@ -10,8 +10,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "vitest run --config vitest.e2e.config.ts",
-    "ingest": "tsx scripts/ingest-exercises.ts"
+    "e2e": "vite build && vitest run --config vitest.e2e.config.ts",
+    "ingest": "tsx scripts/ingest-exercises.ts",
+    "icons": "tsx scripts/make-icons.ts",
+    "build:pages": "BASE_PATH=/gains/ npm run build"
   },
   "dependencies": {
     "idb": "^8.0.0",

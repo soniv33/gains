@@ -54,11 +54,34 @@ of hard deletes), so adding cloud sync later is additive rather than a migration
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
-npm run build      # typecheck + production build
-npm test           # unit tests over the lifting logic
-npm run e2e        # drives a real browser at phone size
+npm run dev              # http://localhost:5173
+npm run dev -- --host    # also reachable from your phone on the same wifi
+npm run build            # typecheck + production build
+npm test                 # unit tests over the lifting logic
+npm run e2e              # drives a real browser at phone size
 ```
+
+Note that `npm run dev` does not register the service worker, so offline and
+Add to Home Screen only work against a real build (`npm run build && npm run
+preview`) or the deployed site.
+
+## Getting it on your phone
+
+Pushing to `main` deploys to **https://soniv33.github.io/gains/** via GitHub
+Actions. Enable it once, under **Settings → Pages → Source → GitHub Actions**;
+after that every push to `main` redeploys. You can also run the workflow by hand
+from the Actions tab to deploy a branch before merging.
+
+Then open that URL in Safari on your phone and use **Share → Add to Home
+Screen**. It installs as a standalone app: its own icon, no browser chrome, and
+it works with no signal.
+
+The site is built for the `/gains/` subpath (`npm run build:pages`). Pages has no
+SPA rewrite, so the build also emits a `404.html` copy of the app shell — that is
+what makes a hard refresh on a deep link work.
+
+If you ever serve it from a domain root instead, `npm run build` is already
+correct; the subpath is opt-in via `BASE_PATH`.
 
 ## Exercise data
 
