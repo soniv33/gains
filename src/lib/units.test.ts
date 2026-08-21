@@ -19,6 +19,11 @@ describe('units', () => {
     expect(formatWeight(fromDisplay(62.5, 'kg'), 'kg')).toBe('62.5')
   })
 
+  it('keeps the second decimal, because 1.25 kg is a real plate', () => {
+    expect(formatWeight(fromDisplay(1.25, 'kg'), 'kg')).toBe('1.25')
+    expect(formatWeight(2.5, 'lb')).toBe('2.5')
+  })
+
   it('steps by 5 lb or 2.5 kg, with a finer step for small jumps', () => {
     expect(stepLb('lb')).toBe(5)
     expect(stepLb('lb', true)).toBe(2.5)

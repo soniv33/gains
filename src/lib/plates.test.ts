@@ -57,6 +57,13 @@ describe('solvePlates', () => {
     expect(describeStack(s, 'kg')).toBe('25 · 15')
   })
 
+  it('never rounds a 1.25 kg plate into something that does not exist', () => {
+    const bar = fromDisplay(20, 'kg')
+    const s = solvePlates(fromDisplay(22.5, 'kg'), bar, DEFAULT_PLATES_KG_AS_LB)
+    expect(describeStack(s, 'kg')).toBe('1.25')
+    expect(s.exact).toBe(true)
+  })
+
   it('renders the stack as the plates you grab, heaviest first', () => {
     expect(describeStack(solvePlates(275, BAR, PLATES), 'lb')).toBe('45 · 45 · 25')
   })

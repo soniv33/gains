@@ -16,8 +16,11 @@ export function fromDisplay(value: number, units: Units): number {
   return units === 'kg' ? value * LB_PER_KG : value
 }
 
-/** Trims trailing zeros so 135 reads "135" and 62.5 reads "62.5". */
-export function formatWeight(lb: number, units: Units, decimals = 1): string {
+/**
+ * Trims trailing zeros so 135 reads "135" and 62.5 reads "62.5". Two decimals by
+ * default because a 1.25 kg plate is a real plate, and rounding it to 1.3 is wrong.
+ */
+export function formatWeight(lb: number, units: Units, decimals = 2): string {
   const v = toDisplay(lb, units)
   const rounded = Math.round(v * 10 ** decimals) / 10 ** decimals
   return String(rounded)

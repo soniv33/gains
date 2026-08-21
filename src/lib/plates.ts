@@ -80,7 +80,8 @@ export function describeStack(solution: PlateSolution, units: Units): string {
   if (!solution.perSide.length) return 'empty bar'
   return solution.perSide
     .flatMap(({ plate, count }) =>
-      Array<number>(count).fill(Math.round(toDisplay(plate, units) * 10) / 10),
+      // Two decimals: a 1.25 kg plate must not print as 1.3.
+      Array<number>(count).fill(Math.round(toDisplay(plate, units) * 100) / 100),
     )
     .join(' · ')
 }
