@@ -31,7 +31,6 @@ export const testExercise = (over: Partial<Exercise> = {}): Exercise => ({
   usesBar: true,
   defaultRepRange: { min: 5, max: 8 },
   defaultRestSec: 150,
-  instructions: [],
   ...over,
 })
 

@@ -80,9 +80,8 @@ export interface Exercise {
   usesBar: boolean
   defaultRepRange: RepRange
   defaultRestSec: number
-  instructions: string[]
-  /** Two vendored frames: start position and end position. */
-  frames?: [string, string]
+  /** True when start/end demo frames are vendored under public/ex/<id>/. */
+  hasDemo?: boolean
   /** Reserved: a real multi-frame demo, if we ever swap the loop for a GIF. */
   demoUrl?: string
   custom?: boolean
