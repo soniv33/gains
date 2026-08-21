@@ -90,13 +90,11 @@ Then open the URL in Safari on your phone and use **Share → Add to Home Screen
 It installs as a standalone app: its own icon, no browser chrome, and it works
 with no signal.
 
-### GitHub Pages, if you ever want it
+### Deploying under a subpath
 
-Still supported, just not the default. Pages serves from `/gains/`, so the build
-needs `npm run build:pages` — which sets `BASE_PATH` and emits a `404.html` copy
-of the app shell, since Pages has no SPA rewrite. Run the **Deploy to GitHub
-Pages** workflow by hand from the Actions tab, having set
-**Settings → Pages → Source → GitHub Actions** once.
+If you ever host this somewhere that is not a domain root, `npm run build:pages`
+sets `BASE_PATH` and emits a `404.html` copy of the app shell for hosts with no
+SPA rewrite. Vercel needs neither.
 
 ## Exercise data
 
