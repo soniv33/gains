@@ -1,7 +1,12 @@
 import { spawn, type ChildProcess } from 'node:child_process'
 import { chromium, devices, type Browser, type Page } from '@playwright/test'
 
-export const BASE_URL = 'http://localhost:4173'
+/**
+ * Defaults to a local `vite preview`. Point E2E_BASE_URL at any other origin to
+ * run the same suite against a real deploy, or against a host that mimics one.
+ */
+export const BASE_URL = process.env.E2E_BASE_URL ?? 'http://localhost:4173'
+const OWN_SERVER = !process.env.E2E_BASE_URL
 const CHROMIUM = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome'
 
 let server: ChildProcess | undefined
@@ -23,8 +28,9 @@ async function waitForServer(url: string, timeoutMs = 60_000) {
 
 export async function startHarness() {
   try {
-    await waitForServer(BASE_URL, 1_000)
+    await waitForServer(BASE_URL, OWN_SERVER ? 1_000 : 30_000)
   } catch {
+    if (!OWN_SERVER) throw new Error(`nothing serving at ${BASE_URL}`)
     server = spawn('npx', ['vite', 'preview', '--port', '4173', '--strictPort'], {
       stdio: 'ignore',
       detached: false,
